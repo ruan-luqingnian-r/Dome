@@ -1,0 +1,18 @@
+server:
+  port: 8086
+
+spring:
+  #thymeleaf
+  thymeleaf:
+    cache: false
+
+  #数据库连接配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/employment?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useInformationSchema=true
+    username: root
+    password: root
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
