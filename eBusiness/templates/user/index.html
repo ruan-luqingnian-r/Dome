@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>主页</title>
+	<link rel="stylesheet" href="../../static/css/bootstrap.min.css" />
+	<script src="../../static/js/bootstrap.min.js"></script>
+
+	<script src="../../static/js/jquery.min.js"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		function focus(gid) {
+			$.ajax(
+				{
+					//请求路径，要注意的是url和th:inline="javascript"
+					url: [[@{/cart/focus
+		}]],
+		//请求类型
+		type: "post",
+			contentType : "application/json",
+				//data表示发送的数据
+				data : JSON.stringify({
+					id: gid
+				}),
+					//成功响应的结果
+					success : function(obj) {//obj响应数据
+						if (obj == "no") {
+							alert("您已收藏该商品！");
+						} else if (obj == "ok") {
+							alert("成功收藏该商品");
+						} else {
+							alert("您没有登录，请登录！");
+						}
+					},
+		error: function() {
+			alert("处理异常！");
+		}
+				}	
+			);
+	}
+	</script>
+
+	<style type="text/css">
+		.carousel {
+			height: 200px;
+			background-color: #000;
+		}
+
+		.carousel .item {
+			height: 200px;
+			background-color: #000;
+		}
+
+		.carousel img {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- 加载header.html -->
+	<div id="header">
+		<div class="container-fruid">
+			<div class="navbar navbar-default navbar-fixed-top" role="navigation" style="padding-left: 30px;">
+				<div class="navbar-header">
+					<span class="navbar-brand">欢迎光临eBusiness</span>
+				</div>
+				<ul class="nav navbar-nav">
+					<li><a th:href="@{user/toRegister}">注册</a></li>
+					<li>
+						<a th:href="(${session.bUser} == null)?'user/toLogin':'#'">
+							<span th:if="${session.bUser} == null">
+								登录
+							</span>
+							<span th:if="${session.bUser} != null">
+								欢迎<span th:text="${session.bUser.bemail}"></span>
+							</span>
+						</a>
+					</li>
+					<li><a th:href="@{admin/toLogin}">后台</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right" style="padding-right: 30px;">
+					<li><a href="cart/userInfo">个人信息</a></li>
+					<li><a href="cart/selectCart">我的购物车</a></li>
+					<li><a href="cart/myFocus">我的收藏</a></li>
+					<li><a href="cart/myOder">我的订单</a></li>
+					<li class="dropdown"><a href="##" data-toggle="dropdown" class="dropdown-toggle">关于我们<span
+								class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="##">联系我们</a></li>
+							<li><a href="##">投诉建议</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<!-- ************************************************** -->
+			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel" style="margin-top: 20px;">
+				<!-- Indicators 小圆圈-->
+				<ol class="carousel-indicators">
+					<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+					<li data-target="#carousel-example-generic" data-slide-to="1"> </li>
+					<li data-target="#carousel-example-generic" data-slide-to="2"> </li>
+				</ol>
+				<!-- 滚动广告图片 -->
+				<div class="carousel-inner" role="listbox">
+					<div class='item active'>
+						<img src="../../static/images/201910274083109998.jpg" >
+						<div class="carousel-caption"><span>商品名字1</span></div>
+					</div>
+					<div class='item'>
+						<img src="../../static/images/201910274134701669.jpg">
+						<div class="carousel-caption"><span>商品名字2</span></div>
+					</div>
+					<div class='item'>
+						<img src="../../static/images/201910274134725907.jpg" >
+						<div class="carousel-caption"><span>商品名字3</span></div>
+					</div>
+				</div>
+				<!-- Controls -->
+				<a class="left carousel-control" href="#carousel-example-generic"  data-slide="prev"> <span
+						class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a> <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div>
+			<!-- *************************************** -->
+			<div class="navbar navbar-default " role="navigation">
+				<ul class="nav navbar-nav" style="padding-left: 50px;">
+					<li><a th:href="@{/}">首页</a></li>
+					<li th:each="gty:${goodsType}"><a th:href="'?tid=' + ${gty.id}"><span
+								th:text="${gty.typename}"></span></a></li>
+				</ul>
+				<form action="search" class="navbar-form navbar-right" style="padding-right: 50px;">
+					<div class="form-group">
+						<input type="text" class="form-control" name="mykey" placeholder="请输入关键词" />
+					</div>
+					<button type="submit" class="btn btn-default">搜索</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- end of header -->
+	<div class="container">
+		<div>
+			<h4>推荐商品</h4>
+		</div>
+		<div class="row">
+			<div class="col-xs-6 col-md-2" th:each="rGoods:${recommendGoods}">
+				<a th:href="'goodsDetail?id=' + ${rGoods.id}" class="thumbnail"> <img alt="100%x180"
+						src="../../static/images/1.jpg" style="height: 180px; width: 100%; display: block;">
+				</a>
+				<div class="caption" style="text-align: center;">
+					<div>
+						<span th:text="${rGoods.gname}">飞机</span>
+					</div>
+					<div>
+						<span style="color: red;">&yen;
+							<span th:text="${rGoods.grprice}">99999</span>
+						</span>
+						<span class="text-dark" style="text-decoration: line-through;"> &yen;
+							<span th:text="${rGoods.goprice}"></span>
+						</span>
+					</div>
+					<a th:href="'javascript:focus('+ ${rGoods.id} +')'" class="btn btn-primary"
+						style="font-size: 10px;">加入收藏</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6 col-md-2" th:each="rGoods:${recommendGoods}">
+					<a th:href="'goodsDetail?id=' + ${rGoods.id}" class="thumbnail"> <img alt="100%x180"
+							src="../../static/images/1.jpg" style="height: 180px; width: 100%; display: block;">
+					</a>
+					<div class="caption" style="text-align: center;">
+						<div>
+							<span th:text="${rGoods.gname}">飞机</span>
+						</div>
+						<div>
+							<span style="color: red;">&yen;
+								<span th:text="${rGoods.grprice}">99999</span>
+							</span>
+							<span class="text-dark" style="text-decoration: line-through;"> &yen;
+								<span th:text="${rGoods.goprice}"></span>
+							</span>
+						</div>
+						<a th:href="'javascript:focus('+ ${rGoods.id} +')'" class="btn btn-primary"
+							style="font-size: 10px;">加入收藏</a>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6 col-md-2" th:each="rGoods:${recommendGoods}">
+						<a th:href="'goodsDetail?id=' + ${rGoods.id}" class="thumbnail"> <img alt="100%x180"
+								src="../../static/images/1.jpg" style="height: 180px; width: 100%; display: block;">
+						</a>
+						<div class="caption" style="text-align: center;">
+							<div>
+								<span th:text="${rGoods.gname}">飞机</span>
+							</div>
+							<div>
+								<span style="color: red;">&yen;
+									<span th:text="${rGoods.grprice}">99999</span>
+								</span>
+								<span class="text-dark" style="text-decoration: line-through;"> &yen;
+									<span th:text="${rGoods.goprice}"></span>
+								</span>
+							</div>
+							<a th:href="'javascript:focus('+ ${rGoods.id} +')'" class="btn btn-primary"
+								style="font-size: 10px;">加入收藏</a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-6 col-md-2" th:each="rGoods:${recommendGoods}">
+							<a th:href="'goodsDetail?id=' + ${rGoods.id}" class="thumbnail"> <img alt="100%x180"
+									src="../../static/images/1.jpg" style="height: 180px; width: 100%; display: block;">
+							</a>
+							<div class="caption" style="text-align: center;">
+								<div>
+									<span th:text="${rGoods.gname}">飞机</span>
+								</div>
+								<div>
+									<span style="color: red;">&yen;
+										<span th:text="${rGoods.grprice}">99999</span>
+									</span>
+									<span class="text-dark" style="text-decoration: line-through;"> &yen;
+										<span th:text="${rGoods.goprice}"></span>
+									</span>
+								</div>
+								<a th:href="'javascript:focus('+ ${rGoods.id} +')'" class="btn btn-primary"
+									style="font-size: 10px;">加入收藏</a>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-6 col-md-2" th:each="rGoods:${recommendGoods}">
+								<a th:href="'goodsDetail?id=' + ${rGoods.id}" class="thumbnail"> <img alt="100%x180"
+										src="../../static/images/1.jpg"
+										style="height: 180px; width: 100%; display: block;">
+								</a>
+								<div class="caption" style="text-align: center;">
+									<div>
+										<span th:text="${rGoods.gname}">飞机</span>
+									</div>
+									<div>
+										<span style="color: red;">&yen;
+											<span th:text="${rGoods.grprice}">99999</span>
+										</span>
+										<span class="text-dark" style="text-decoration: line-through;"> &yen;
+											<span th:text="${rGoods.goprice}"></span>
+										</span>
+									</div>
+									<a th:href="'javascript:focus('+ ${rGoods.id} +')'" class="btn btn-primary"
+										style="font-size: 10px;">加入收藏</a>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-6 col-md-2" th:each="rGoods:${recommendGoods}">
+									<a th:href="'goodsDetail?id=' + ${rGoods.id}" class="thumbnail"> <img alt="100%x180"
+											src="../../static/images/1.jpg"
+											style="height: 180px; width: 100%; display: block;">
+									</a>
+									<div class="caption" style="text-align: center;">
+										<div>
+											<span th:text="${rGoods.gname}">飞机</span>
+										</div>
+										<div>
+											<span style="color: red;">&yen;
+												<span th:text="${rGoods.grprice}">99999</span>
+											</span>
+											<span class="text-dark" style="text-decoration: line-through;"> &yen;
+												<span th:text="${rGoods.goprice}"></span>
+											</span>
+										</div>
+										<a th:href="'javascript:focus('+ ${rGoods.id} +')'" class="btn btn-primary"
+											style="font-size: 10px;">加入收藏</a>
+									</div>
+								</div>
+							</div>
+							<!-- *********************************************************** -->
+							<div>
+								<h4>最新商品</h4>
+							</div>
+							<div class="row">
+								<div class="col-xs-6 col-md-2" th:each="lGoods:${lastedGoods}">
+									<a th:href="'goodsDetail?id=' + ${lGoods.id}" class="thumbnail"> <img alt="100%x180"
+											th:src="'images/' + ${lGoods.gpicture}"
+											style="height: 180px; width: 100%; display: block;">
+									</a>
+									<div class="caption" style="text-align: center;">
+										<div>
+											<span th:text="${lGoods.gname}"></span>
+										</div>
+										<div>
+											<span style="color: red;">&yen;
+												<span th:text="${lGoods.grprice}"></span>
+											</span>
+											<span class="text-dark" style="text-decoration: line-through;">&yen;
+												<span th:text="${lGoods.goprice}"></span>
+											</span>
+										</div>
+										<a th:href="'javascript:focus('+ ${lGoods.id} +')'" class="btn btn-primary"
+											style="font-size: 10px;">加入收藏</a>
+									</div>
+								</div>
+							</div>
+						</div>
+</body>
+
+</html>
